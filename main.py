@@ -35,13 +35,17 @@ def getShiftTimeRemaining(seconds):
         return 0
     
 def main():
-    # seconds_sounds_root = "media/seconds/s"
-    seconds_sounds_root = "media/altseconds/s"
+    print("Starting...")
+    seconds_sounds_root = "media/seconds/s"
+    # seconds_sounds_root = "media/altseconds/s"
     shift_sounds_root = "media/shifts/"
+    
+    print("Initializing pygame...")
     pygame.mixer.init()
+    print("Pygame initialized.")
 
-    shift_change_sound = pygame.mixer.Sound('media/jason.mp3')
-    time_count_sound = pygame.mixer.Sound('media/balls2.mp3')
+    # shift_change_sound = pygame.mixer.Sound('media/jason.mp3')
+    # time_count_sound = pygame.mixer.Sound('media/balls2.mp3')
 
     seconds_sounds = []
     win_shift_sounds = {}
@@ -94,10 +98,10 @@ def main():
     print("Smartdashboard connected")
 
     last_floor_val = 0
-    last_shift = ""
-    second_counter = 0
-    switch_shift = False
-    match_counter = 140
+    # last_shift = ""
+    # second_counter = 0
+    # switch_shift = False
+    # match_counter = 140
     
     last_disabled = True
     
@@ -109,7 +113,6 @@ def main():
     
     while True:
         if disabled.get():
-            match_counter = 140
             last_disabled = True
             continue
         
@@ -172,11 +175,9 @@ def main():
         val = 140 - (time.time() - start)
         floored_val = getShiftTimeRemaining(140 - int(val))
         if (last_floor_val != floored_val):
-            match_counter = match_counter - 1
-            print(match_counter)
             # if (last_shift != shift_val):
-            if (last_floor_val == 0 or val == 139):
-                predicted_shift = getShift(140 - match_counter)
+            if (last_floor_val == 0 or val >= 139):
+                predicted_shift = getShift(140 - int(val))
                 print("Predicted shift:", predicted_shift)
                 print("\n")
                 if (auto_won.get()):
@@ -214,7 +215,7 @@ def main():
         # playsound("media/balls2.mp3", block=False)
         # time.sleep(1)
         
-print(__name__)
+# print(__name__)
         
 if __name__ == "__main__":
     main()
