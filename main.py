@@ -2,6 +2,9 @@ from ntcore import NetworkTableInstance
 import pygame
 import time
 
+use_alt = True
+simualtion = True
+
 def getShift(seconds):
     if (seconds < 10):
         return "Transition"
@@ -37,7 +40,9 @@ def getShiftTimeRemaining(seconds):
 def main():
     print("Starting...")
     seconds_sounds_root = "media/seconds/s"
-    # seconds_sounds_root = "media/altseconds/s"
+    if use_alt:
+        seconds_sounds_root = "media/altseconds/s"
+    
     shift_sounds_root = "media/shifts/"
     
     print("Initializing pygame...")
@@ -71,13 +76,19 @@ def main():
     lose_shift_sounds["Endgame"] = pygame.mixer.Sound(shift_sounds_root + "endgame.mp3")
     
     bootup_sound = pygame.mixer.Sound('media/utils/bootup.mp3')
+    disconnect_sound = pygame.mixer.Sound('media/utils/disconnect1.mp3')
+    pairing_sound = pygame.mixer.Sound('media/utils/pairing1.mp3')
+    
+    auto_sound = pygame.mixer.Sound("media/shifts/auto.mp3")
 
     print("Sounds initialized")
 
     ntInst = NetworkTableInstance.getDefault()
     ntInst.startClient4("my-dashboard")
-    # ntInst.setServerTeam(3006)
-    ntInst.setServer("127.0.0.1")
+    if not simualtion:
+        ntInst.setServerTeam(3006)
+    else:
+        ntInst.setServer("127.0.0.1")
     print("Connecting to NetworkTables...")
         
     while not ntInst.isConnected():
@@ -94,6 +105,8 @@ def main():
     disabled = smartdashboard.getBooleanTopic(nt_prefix + "disabled").subscribe(True)
 
     auto_won = smartdashboard.getBooleanTopic(nt_prefix + "auto won").subscribe(False)
+    
+    is_auto = smartdashboard.getBooleanTopic(nt_prefix + "is auto").subscribe(False)
 
     print("Smartdashboard connected")
 
@@ -112,6 +125,18 @@ def main():
     bootup_sound.play()
     
     while True:
+        if not ntInst.isConnected():
+            print("NT Disconnected")
+            disconnect_sound.play()
+            pygame.time.wait(int(disconnect_sound.get_length() * 1000))  # get_length() is in seconds, wait() takes ms
+            print("Connecting to NetworkTables...")
+            pairing_sound.play()
+            pygame.time.wait(int(pairing_sound.get_length() * 1000))  # get_length() is in seconds, wait() takes ms
+            while (not ntInst.isConnected()):
+                time.sleep(0.1)
+            print("Smartdashboard connected")
+            bootup_sound.play()
+        
         if disabled.get():
             last_disabled = True
             continue
@@ -175,8 +200,19 @@ def main():
         val = 140 - (time.time() - start)
         floored_val = getShiftTimeRemaining(140 - int(val))
         if (last_floor_val != floored_val):
+            if (is_auto.get()):
+                auto_val = 20 - (time.time() - start)
+                auto_floor = int(auto_val)
+                if (auto_floor >= 20 or auto_val < 0):
+                    continue                    
+                print("Auto: ", auto_floor)
+                if (auto_val >= 19):
+                    auto_sound.play()
+                    # continue
+                else:
+                    seconds_sounds[auto_floor].play()
             # if (last_shift != shift_val):
-            if (last_floor_val == 0 or val >= 139):
+            elif (last_floor_val == 0 or val >= 139):
                 predicted_shift = getShift(140 - int(val))
                 print("Predicted shift:", predicted_shift)
                 print("\n")
