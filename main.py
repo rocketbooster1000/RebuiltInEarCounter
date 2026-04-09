@@ -1,9 +1,16 @@
+import sys, os
+
 from ntcore import NetworkTableInstance
 import pygame
 import time
 
 use_alt = True
-simualtion = True
+simualtion = False
+
+def resource_path(relative):
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, relative)  # running as exe
+    return relative  # running normally, just returns the path as-is
 
 def getShift(seconds):
     if (seconds < 10):
@@ -59,27 +66,27 @@ def main():
     print("Initializing sounds")
 
     for i in range(30):
-        seconds_sounds.append(pygame.mixer.Sound(seconds_sounds_root + str(i) + ".mp3"))
+        seconds_sounds.append(pygame.mixer.Sound(resource_path(seconds_sounds_root + str(i) + ".mp3")))
 
-    win_shift_sounds["Transition"] = pygame.mixer.Sound(shift_sounds_root + "auto_won.mp3")
-    win_shift_sounds["Shift 1"] = pygame.mixer.Sound(shift_sounds_root + "lob.mp3")
-    win_shift_sounds["Shift 2"] = pygame.mixer.Sound(shift_sounds_root + "scoring.mp3")
-    win_shift_sounds["Shift 3"] = pygame.mixer.Sound(shift_sounds_root + "lob.mp3")
-    win_shift_sounds["Shift 4"] = pygame.mixer.Sound(shift_sounds_root + "scoring.mp3")
-    win_shift_sounds["Endgame"] = pygame.mixer.Sound(shift_sounds_root + "endgame.mp3")
+    win_shift_sounds["Transition"] = pygame.mixer.Sound(resource_path(shift_sounds_root + "auto_won.mp3"))
+    win_shift_sounds["Shift 1"] = pygame.mixer.Sound(resource_path(shift_sounds_root + "lob.mp3"))
+    win_shift_sounds["Shift 2"] = pygame.mixer.Sound(resource_path(shift_sounds_root + "scoring.mp3"))
+    win_shift_sounds["Shift 3"] = pygame.mixer.Sound(resource_path(shift_sounds_root + "lob.mp3"))
+    win_shift_sounds["Shift 4"] = pygame.mixer.Sound(resource_path(shift_sounds_root + "scoring.mp3"))
+    win_shift_sounds["Endgame"] = pygame.mixer.Sound(resource_path(shift_sounds_root + "endgame.mp3"))
     
-    lose_shift_sounds["Transition"] = pygame.mixer.Sound(shift_sounds_root + "auto_lost.mp3")
-    lose_shift_sounds["Shift 1"] = pygame.mixer.Sound(shift_sounds_root + "scoring.mp3")
-    lose_shift_sounds["Shift 2"] = pygame.mixer.Sound(shift_sounds_root + "lob.mp3")
-    lose_shift_sounds["Shift 3"] = pygame.mixer.Sound(shift_sounds_root + "scoring.mp3")
-    lose_shift_sounds["Shift 4"] = pygame.mixer.Sound(shift_sounds_root + "lob.mp3")
-    lose_shift_sounds["Endgame"] = pygame.mixer.Sound(shift_sounds_root + "endgame.mp3")
+    lose_shift_sounds["Transition"] = pygame.mixer.Sound(resource_path(shift_sounds_root + "auto_lost.mp3"))
+    lose_shift_sounds["Shift 1"] = pygame.mixer.Sound(resource_path(shift_sounds_root + "scoring.mp3"))
+    lose_shift_sounds["Shift 2"] = pygame.mixer.Sound(resource_path(shift_sounds_root + "lob.mp3"))
+    lose_shift_sounds["Shift 3"] = pygame.mixer.Sound(resource_path(shift_sounds_root + "scoring.mp3"))
+    lose_shift_sounds["Shift 4"] = pygame.mixer.Sound(resource_path(shift_sounds_root + "lob.mp3"))
+    lose_shift_sounds["Endgame"] = pygame.mixer.Sound(resource_path(shift_sounds_root + "endgame.mp3"))
     
-    bootup_sound = pygame.mixer.Sound('media/utils/bootup.mp3')
-    disconnect_sound = pygame.mixer.Sound('media/utils/disconnect1.mp3')
-    pairing_sound = pygame.mixer.Sound('media/utils/pairing1.mp3')
+    bootup_sound = pygame.mixer.Sound(resource_path('media/utils/bootup.mp3'))
+    disconnect_sound = pygame.mixer.Sound(resource_path('media/utils/disconnect1.mp3'))
+    pairing_sound = pygame.mixer.Sound(resource_path('media/utils/pairing1.mp3'))
     
-    auto_sound = pygame.mixer.Sound("media/shifts/auto.mp3")
+    auto_sound = pygame.mixer.Sound(resource_path("media/shifts/auto.mp3"))
 
     print("Sounds initialized")
 
